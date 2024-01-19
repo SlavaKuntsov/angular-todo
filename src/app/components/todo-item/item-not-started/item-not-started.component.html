@@ -1,0 +1,39 @@
+<div class="bg-[#fff6a3]">
+	<img src="../../../../assets/icons/not-started.svg" alt="img" />
+	<textarea
+		rows="1"
+		type="text"
+		[(ngModel)]="newItemTitle"
+		(input)="newTitle($event)"
+		(keyup.enter)="newTitle($event)"
+		placeholder="New item..."
+		class="title text-yellow-600 w-auto flex flex-1 resize-none font-bold text-xl border-b-[2px] placeholder:text-[#aaaaaac9] placeholder:text-xl transition-all hover:bg-transparent bg-transparent !border-0 focus:shadow-none"
+		pInputTextarea
+		[autoResize]="true"
+		(focus)="onInputFocus(true)"
+		(blur)="onInputFocus(false)"
+	></textarea>
+	@if (inputFocusBool){
+	<button
+		(click)="newTitle($event); newItemTitle?.trim()"
+		class="border-0 min-w-[28px] h-[28px] hover:scale-110 transition-all hover:shadow-blue-200 rounded-xl hover:shadow-md"
+	>
+		<img
+			class="cursor-pointer min-w-[28px] min-h-[28px] rounded-lg"
+			src="../../../assets/icons/in-progress.svg"
+			alt="create"
+		/>
+	</button>
+	} @else {
+	<button
+		(click)="deleteItem($event)"
+		class="border-0 min-w-[28px] h-[28px] hover:scale-110 transition-all hover:shadow-yellow-300 rounded-xl hover:shadow-md"
+	>
+		<img
+			class="cursor-pointer min-w-[28px] min-h-[28px] rounded-lg"
+			src="../../../assets/icons/delete.svg"
+			alt="delete"
+		/>
+	</button>
+	}
+</div>
