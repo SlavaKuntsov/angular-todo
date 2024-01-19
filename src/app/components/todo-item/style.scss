@@ -1,0 +1,23 @@
+div {
+	@apply rounded-3xl border-slate-200 border-[1px] border-solid shadow-md shadow-gray-200  flex flex-row items-start gap-4 px-5 py-3 font-semibold;
+}
+h5 {
+	@apply font-semibold text-xl;
+}
+// .icon{
+// 	@apply min-w-[10px] min-h-[10px] bg-white rounded-md;
+// }
+img {
+	@apply h-[25px];
+}
+div {
+	& > img {
+		@apply my-1;
+	}
+	button {
+		@apply my-1;
+	}
+}
+// <div class="bg-[#fff6a3]">  text-yellow-600
+// <div class="bg-[#cdffc9] relative"> text-green-700
+// <div class="bg-[#e0eaff] relative"> text-blue-600
