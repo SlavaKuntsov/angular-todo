@@ -81,7 +81,7 @@ export class MainComponent {
 		console.log(2);
 		this.confirmationService.confirm({
 			target: event.target as EventTarget,
-			message: 'Do you want to delete this record?',
+			message: 'Do you want to delete this group?',
 			header: 'title',
 			icon: 'pi pi-info-circle',
 			acceptButtonStyleClass: 'p-button-danger p-button-text',
@@ -114,7 +114,7 @@ export class MainComponent {
 		this.confirmationService.confirm({
 			target: event.event.target as EventTarget,
 			message: 'Do you want to delete this record?',
-			header: 'title',
+			header: 'Confirmation',
 			icon: 'pi pi-info-circle',
 			acceptButtonStyleClass: 'p-button-danger p-button-text',
 			rejectButtonStyleClass: 'p-button-text p-button-text',
