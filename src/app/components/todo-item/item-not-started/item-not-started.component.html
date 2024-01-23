@@ -1,39 +1,88 @@
-<div class="bg-[#fff6a3]">
-	<img src="../../../../assets/icons/not-started.svg" alt="img" />
+<div class="item-container" [ngClass]="styleClass">
+	<div class="titleOptions">
+		<!-- @switch (styleClass) {
+			@case ('yellow') {
+				<img src="../../../../assets/icons/not-started.svg" alt="img" />
+			}
+			@case ('blue') {
+				<img src="../../../../assets/icons/in-progress.svg" alt="img" />
+			}
+			@case ('green') {
+				<img src="../../../../assets/icons/completed.svg" alt="img" />
+			}
+		} -->
+		<p-dropdown
+			[options]="itemStatus"
+			[(ngModel)]="selectedItemStatus"
+			optionLabel="status"
+			[showClear]="true"
+			(onChange)="newStatus($event)"
+		>
+			<ng-template pTemplate="selectedItem">
+				<img
+					[src]="selectedItemStatus"
+					class="min-w-[25px] h-[25px]"
+					alt="status"
+				/>
+			</ng-template>
+			<ng-template let-itemStatus pTemplate="item">
+				<img
+					[src]="itemStatus"
+					class="w-[25px] h-[25px]"
+					alt="status"
+				/>
+			</ng-template>
+		</p-dropdown>
+		<textarea
+			rows="1"
+			type="text"
+			[(ngModel)]="newItemTitle"
+			(input)="newTitle($event)"
+			(keyup.enter)="newTitle($event)"
+			placeholder="New item..."
+			[ngClass]="{ 'line-through': styleClass === 'green' }"
+			class="title w-auto flex flex-1 resize-none font-bold text-xl border-b-[2px] placeholder:text-[#aaaaaac9] decoration-1 decoration-green-900 decora placeholder:text-xl transition-all hover:bg-transparent bg-transparent !border-0 focus:shadow-none"
+			pInputTextarea
+			[autoResize]="true"
+			(focus)="onInputFocus(true)"
+			(blur)="onInputFocus(false)"
+		></textarea>
+		@if (inputFocusBool){
+		<button
+			(click)="newTitle($event); newItemTitle?.trim()"
+			class="border-0 min-w-[28px] h-[28px] hover:scale-110 transition-all hover:shadow-blue-200 rounded-xl hover:shadow-md"
+		>
+			<img
+				class="cursor-pointer min-w-[28px] min-h-[28px] rounded-lg"
+				src="../../../assets/icons/in-progress.svg"
+				alt="create"
+			/>
+		</button>
+		} @else {
+		<button
+			(click)="deleteItem($event)"
+			class="delete border-0 min-w-[28px] h-[28px] hover:scale-110 transition-all rounded-xl hover:shadow-md"
+		>
+			<img
+				class="cursor-pointer min-w-[28px] min-h-[28px] rounded-lg"
+				src="../../../assets/icons/delete.svg"
+				alt="delete"
+			/>
+		</button>
+		}
+	</div>
 	<textarea
+		*ngIf="oldDescription.trim() !== ''"
 		rows="1"
 		type="text"
-		[(ngModel)]="newItemTitle"
-		(input)="newTitle($event)"
-		(keyup.enter)="newTitle($event)"
-		placeholder="New item..."
-		class="title text-yellow-600 w-auto flex flex-1 resize-none font-bold text-xl border-b-[2px] placeholder:text-[#aaaaaac9] placeholder:text-xl transition-all hover:bg-transparent bg-transparent !border-0 focus:shadow-none"
+		[(ngModel)]="newItemDescription"
+		(input)="newDescription($event)"
+		(keyup.enter)="newDescription($event)"
+		placeholder="Description"
+		class="title w-full flex flex-1 resize-none font-bold text-xl border-b-[2px] placeholder:text-xl transition-all hover:bg-transparent bg-transparent !border-0 focus:shadow-none"
 		pInputTextarea
 		[autoResize]="true"
 		(focus)="onInputFocus(true)"
 		(blur)="onInputFocus(false)"
 	></textarea>
-	@if (inputFocusBool){
-	<button
-		(click)="newTitle($event); newItemTitle?.trim()"
-		class="border-0 min-w-[28px] h-[28px] hover:scale-110 transition-all hover:shadow-blue-200 rounded-xl hover:shadow-md"
-	>
-		<img
-			class="cursor-pointer min-w-[28px] min-h-[28px] rounded-lg"
-			src="../../../assets/icons/in-progress.svg"
-			alt="create"
-		/>
-	</button>
-	} @else {
-	<button
-		(click)="deleteItem($event)"
-		class="border-0 min-w-[28px] h-[28px] hover:scale-110 transition-all hover:shadow-yellow-300 rounded-xl hover:shadow-md"
-	>
-		<img
-			class="cursor-pointer min-w-[28px] min-h-[28px] rounded-lg"
-			src="../../../assets/icons/delete.svg"
-			alt="delete"
-		/>
-	</button>
-	}
 </div>

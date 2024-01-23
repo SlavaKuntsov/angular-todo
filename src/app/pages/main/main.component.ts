@@ -1,18 +1,21 @@
 import { CommonModule } from '@angular/common';
-import { CUSTOM_ELEMENTS_SCHEMA, Component } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Component, DoCheck } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { TodoGroupComponent } from '../../components/todo-group/todo-group.component';
-import {
-	ITodoGroup,
-	ITodoItem,
-	TodoStatus,
-} from '../../interfaces/todo.interface';
+import { ITodoGroup, TodoStatus } from '../../interfaces/todo.interface';
 
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
+import {
+	IGroupChange,
+	IGroupDelete,
+	IItemAdd,
+	IItemChange,
+	IItemDelete,
+} from '../../interfaces/todoActions.interface';
 
 @Component({
 	selector: 'app-main',
@@ -33,42 +36,9 @@ import { ToastModule } from 'primeng/toast';
 	templateUrl: './main.component.html',
 	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class MainComponent {
-	public todoGroups: ITodoGroup[];
-	public todoItems: ITodoItem[] = [
-		{
-			title: 'Todo Item',
-			description: 'Todo Item Description',
-			status: TodoStatus.NOT_STARTED,
-		},
-		{
-			title: 'Todo Item 2',
-			description: 'Todo Item Description 2',
-			status: TodoStatus.IN_PROGRESS,
-		},
-		{
-			title: 'Todo Item 3',
-			description: 'Todo Item Description 3',
-			status: TodoStatus.COMPLETED,
-		},
-	];
-	public todoItems2: ITodoItem[] = [
-		{
-			title: 'Todo Item',
-			description: 'Todo Item Description',
-			status: TodoStatus.NOT_STARTED,
-		},
-		{
-			title: 'Todo Item 2',
-			description: 'Todo Item Description 2',
-			status: TodoStatus.IN_PROGRESS,
-		},
-		{
-			title: 'Todo Item 3',
-			description: 'Todo Item Description 3',
-			status: TodoStatus.COMPLETED,
-		},
-	];
+export class MainComponent implements DoCheck {
+	// public todoGroups: ITodoGroup[] = [];
+	todoGroups: ITodoGroup[] = [];
 
 	addGroup(): void {
 		this.todoGroups.push({
@@ -77,10 +47,31 @@ export class MainComponent {
 		});
 	}
 
-	deleteGroup(event: any): void {
-		console.log(2);
+	addItem(item: IItemAdd): void {
+		const newItem = { ...item.value }; // Создаем новый объект на основе item.value
+		this.todoGroups[item.indexGroup].items!.push(newItem);
+		this.sort();
+	}
+
+	changeGroup(group: IGroupChange): void {
+		this.todoGroups[group.indexGroup].title = group.title;
+	}
+
+	changeItem(item: IItemChange): void {
+		const groupItems = this.todoGroups[item.indexGroup].items;
+		if (groupItems && groupItems[item.indexItem]) {
+			const groupItem = groupItems[item.indexItem];
+
+			groupItem.title = item.title;
+			groupItem.description = item.description;
+			groupItem.status = item.status;
+		}
+		this.sort();
+	}
+
+	deleteGroup(group: IGroupDelete): void {
 		this.confirmationService.confirm({
-			target: event.target as EventTarget,
+			target: group.event.target as EventTarget,
 			message: 'Do you want to delete this group?',
 			header: 'title',
 			icon: 'pi pi-info-circle',
@@ -95,9 +86,7 @@ export class MainComponent {
 					summary: 'Confirmed',
 					detail: 'Record deleted',
 				});
-				console.log(3);
-				this.todoGroups.splice(event.index, 1);
-				console.log('event: ', event.index);
+				this.todoGroups.splice(group.indexGroup, 1);
 			},
 			reject: () => {
 				this.messageService.add({
@@ -105,14 +94,13 @@ export class MainComponent {
 					summary: 'Rejected',
 					detail: 'You have rejected',
 				});
-				console.log('no');
 			},
 		});
 	}
 
-	deleteItem(event: any): void {
+	deleteItem(item: IItemDelete): void {
 		this.confirmationService.confirm({
-			target: event.event.target as EventTarget,
+			target: item.event.target as EventTarget,
 			message: 'Do you want to delete this record?',
 			header: 'Confirmation',
 			icon: 'pi pi-info-circle',
@@ -127,9 +115,10 @@ export class MainComponent {
 					summary: 'Confirmed',
 					detail: 'Record deleted',
 				});
-				console.log(event)
-				this.todoGroups[event.indexG].items?.splice(event.indexI, 1);
-
+				this.todoGroups[item.indexGroup].items?.splice(
+					item.indexItem,
+					1
+				);
 			},
 			reject: () => {
 				this.messageService.add({
@@ -141,22 +130,36 @@ export class MainComponent {
 		});
 	}
 
-	addItem(item: { value: ITodoItem; index: number }): void {
-		console.log('item: ', item);
-		const newItem = { ...item.value }; // Создаем новый объект на основе item.value
-		this.todoGroups[item.index].items!.push(newItem);
-	}
-
-	
 	constructor(
 		private confirmationService: ConfirmationService,
 		private messageService: MessageService
-	) {
-		this.todoGroups = [
-			// {
-			// 	title: 'Todo Group',
-			// 	items: this.todoItems,
-			// }
+	) {}
+	ngDoCheck(): void {
+		console.log(this.todoGroups);
+	}
+
+	sort(): void {
+		console.log('sort');
+		this.todoGroups.sort((a, b) => {
+			const statusA = a.items?.[0]?.status; // Предполагая, что status находится в первом элементе массива items
+			const statusB = b.items?.[0]?.status;
+			console.log(statusA, statusB);
+			console.log(1);
+
+			if (statusA && statusB) {
+				return this.compareTypes(statusA, statusB);
+			}
+
+			return 0;
+		});
+	}
+	compareTypes(a: TodoStatus, b: TodoStatus) {
+		console.log('sort');
+		const typesOrder = [
+			TodoStatus.NOT_STARTED,
+			TodoStatus.IN_PROGRESS,
+			TodoStatus.COMPLETED,
 		];
+		return typesOrder.indexOf(a) - typesOrder.indexOf(b);
 	}
 }

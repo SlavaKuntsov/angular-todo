@@ -1,60 +1,60 @@
 <div
-	class="group h-fit flex flex-col gap-4 p-6 bg-white rounded-3xl shadow-xl border-[1px] border-solid border-slate-200"
+	class="group h-fit flex flex-1 flex-col gap-4 p-6 bg-white rounded-3xl shadow-xl border-[1px] border-solid border-slate-200"
 >
 	<div class="flex flex-row justify-between items-center gap-2 mx-5">
 		<textarea
 			rows="1"
 			type="text"
 			[(ngModel)]="title"
-			(input)="onInputChange($event)"
-			(blur)="deleteSpace();"
+			(input)="changeGroup($event)"
+			(blur)="deleteSpace(title)"
 			value="title"
 			placeholder="New group..."
 			class="title w-full font-bold text-[#aaaaaac9] text-2xl border-x-0 border-t-0 rounded-none !outline-0 focus:!outline-0 hover:bg-transparent border-b-[2px] placeholder:text-[#aaaaaac9] focus:shadow-none"
 			pInputTextarea
 			[autoResize]="true"
 		></textarea>
-		<!-- <input
-			type="text"
-			[(ngModel)]="title"
-			(input)="onInputChange($event)"
-			value="title"
-			placeholder="New group..."
-			class="title w-full font-bold text-slate-700 text-2xl border-b-[2px] mx-5 pb-1 focus:outline-none placeholder:text-[#aaaaaac9]"
-		/> -->
-		<h1>{{ todoGroup.title }}</h1>
-		<!-- <div
-			(click)="deleteGroup($event)"
-			class="bg-slate-400 p-2 cursor-pointer"
-		>
-			delete
-		</div> -->
 		<button
 			(click)="deleteGroup($event)"
 			class="border-0 min-w-[28px] h-[28px] hover:scale-110 transition-all hover:shadow-gray-300 rounded-xl shadow-md"
 		>
 			<img
 				(click)="deleteGroup($event)"
-				class="w-[28px] h-[28px] rounded-xl "
+				class="w-[28px] h-[28px] rounded-xl"
 				src="../../../assets/icons/delete.svg"
 				alt="delete"
 			/>
 		</button>
 	</div>
-	<!-- <h2 class="font-bold text-[#aaaaaac9] text-2xl border-b-[2px] mx-5 pb-1">
-		{{ todoGroup.title }}
-	</h2> -->
 
 	<div class="group-items flex flex-col gap-4 w-full">
 		<ng-container *ngFor="let item of todoGroup.items; let i = index">
 			<ng-container [ngSwitch]="item.status">
 				<app-item-not-started
+					(changeItemEvent)="changeItem($event)"
+					(deleteItemEvent)="deleteItem($event)"
+					[todoItem]="item"
+					[index]="i"
+					[styleClass]="'yellow'"
+					*ngSwitchCase="'Not started'"
+				></app-item-not-started>
+				<app-item-not-started
+					(changeItemEvent)="changeItem($event)"
 					(deleteItemHandler)="deleteItem($event)"
 					[todoItem]="item"
 					[index]="i"
-					*ngSwitchCase="'Not started'"
+					[styleClass]="'blue'"
+					*ngSwitchCase="'In progress'"
 				></app-item-not-started>
-				<app-item-in-progress
+				<app-item-not-started
+					(changeItemEvent)="changeItem($event)"
+					(deleteItemHandler)="deleteItem($event)"
+					[todoItem]="item"
+					[index]="i"
+					[styleClass]="'green'"
+					*ngSwitchCase="'Completed'"
+				></app-item-not-started>
+				<!-- <app-item-in-progress
 					(deleteItemHandler)="deleteItem($event)"
 					[todoItem]="item"
 					[index]="i"
@@ -65,65 +65,78 @@
 					[todoItem]="item"
 					[index]="i"
 					*ngSwitchCase="'Completed'"
-				></app-item-completed>
+				></app-item-completed> -->
 				<div *ngSwitchDefault>item</div>
 			</ng-container>
 		</ng-container>
 
 		<div
 			*ngIf="title !== undefined && title.trim() !== ''"
-			class="addItem flex flex-row gap-4 items-start justify-center  mx-5"
+			class="addItem mx-5 flex flex-col gap-2 items-center justify-center"
 		>
-		<!-- *ngIf="newItemTitle !== undefined && newItemTitle.trim() !== ''" -->
-			<p-dropdown
-				[options]="itemStatus"
-				[(ngModel)]="selectedItemStatus"
-				optionLabel="status"
-				[showClear]="true"
-				
+			<div
+				class="titleOptions flex-1 w-full flex flex-row gap-4 items-start justify-center"
 			>
-				<ng-template pTemplate="selectedItem">
+				<p-dropdown
+					[options]="itemStatus"
+					[(ngModel)]="selectedItemStatus"
+					optionLabel="status"
+					[showClear]="true"
+				>
+					<ng-template pTemplate="selectedItem">
+						<img
+							[src]="selectedItemStatus.status"
+							class="min-w-[25px] h-[25px]"
+							alt="status"
+						/>
+					</ng-template>
+					<ng-template let-itemStatus pTemplate="item">
+						<img
+							[src]="itemStatus.status"
+							class="w-[25px] h-[25px]"
+							alt="status"
+						/>
+					</ng-template>
+				</p-dropdown>
+				<textarea
+					rows="1"
+					type="text"
+					[(ngModel)]="newItemTitle"
+					(input)="newTitle($event)"
+					(keyup.enter)="addNewItem()"
+					placeholder="New item..."
+					[ngClass]="{
+						'py-[7px]': !addItemEvent && newItemTitle !== ''
+					}"
+					class="title w-auto flex flex-1 resize-none font-bold text-slate-800 text-xl border-b-[2px] focus:outline-none placeholder:text-[#aaaaaac9] placeholder:text-xl transition-all focus:shadow-none"
+					pInputTextarea
+					[autoResize]="true"
+				></textarea>
+				<button
+					(click)="addNewItem()"
+					class="py-1 w-0 border-0 min-w-[25px] h-[25px] hover:scale-110 transition-all hover:shadow-gray-400 rounded-xl shadow-lg"
+				>
 					<img
-						[src]="selectedItemStatus.status"
 						class="min-w-[25px] h-[25px]"
-						alt="status"
+						[src]="selectedItemStatus.check"
+						alt="create"
 					/>
-				</ng-template>
-				<ng-template let-itemStatus pTemplate="item">
-					<img
-						[src]="itemStatus.status"
-						class="w-[25px] h-[25px]"
-						alt="status"
-					/>
-				</ng-template>
-			</p-dropdown>
-			<!-- (blur)="addNewItem()" -->
+				</button>
+			</div>
 			<textarea
+				*ngIf="newItemTitle !== undefined && newItemTitle.trim() !== ''"
 				rows="1"
 				type="text"
-				[(ngModel)]="newItemTitle"
-				(input)="newTitle($event)"
-				(keyup.enter)="addNewItem();"
-				placeholder="New item..."
-				[ngClass]="{
-					'py-[7px]': !newItemEvent && newItemTitle !== ''
-				}"
-				class="title w-auto flex flex-1 resize-none font-bold text-slate-800 text-xl border-b-[2px] focus:outline-none placeholder:text-[#aaaaaac9] placeholder:text-xl transition-all focus:shadow-none"
+				[(ngModel)]="newItemDescription"
+				(input)="newDescription($event)"
+				(blur)="deleteSpace(newItemDescription)"
+				(keyup.enter)="addNewItem()"
+				value="title"
+				placeholder="Description"
+				class="description w-full pt-0 font-semibold text-slate-800 text-xl border-x-0 border-t-0 rounded-none !outline-0 focus:!outline-0 hover:bg-transparent border-b-[2px] placeholder:text-[#aaaaaac9] focus:shadow-none"
 				pInputTextarea
 				[autoResize]="true"
 			></textarea>
-			<!-- *ngIf="newItemTitle !== undefined && newItemTitle.trim() !== ''" -->
-			<button
-				(click)="addNewItem()"
-				class="py-1 w-0 border-0 min-w-[25px] h-[25px] hover:scale-110 transition-all hover:shadow-gray-400 rounded-xl shadow-lg"
-			>
-			<!-- src="../../../assets/icons/in-progress.svg" -->
-				<img
-					class="min-w-[25px] h-[25px]"
-					[src]="selectedItemStatus.check"
-					alt="create"
-				/>
-			</button>
 		</div>
 	</div>
 </div>

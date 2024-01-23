@@ -22,6 +22,13 @@ import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { ToastModule } from 'primeng/toast';
+import {
+	IGroupChange,
+	IGroupDelete,
+	IItemAdd,
+	IItemChange,
+	IItemDelete,
+} from '../../interfaces/todoActions.interface';
 
 @Component({
 	selector: 'app-todo-group',
@@ -47,84 +54,102 @@ export class TodoGroupComponent {
 	@Input() todoGroup!: ITodoGroup;
 	@Input() index!: number;
 
-	@Output() newItemEvent: EventEmitter<{ value: ITodoItem; index: number }> =
-		new EventEmitter<{ value: ITodoItem; index: number }>();
-	@Output() deleteGroupEvent = new EventEmitter<{
-		index: number;
-		event: Event;
-	}>();
-	@Output() deleteItemEvent = new EventEmitter<{
-		indexG: number;
-		indexI: number;
-		event: Event;
-	}>();
+	@Output() addItemEvent = new EventEmitter<IItemAdd>();
+	@Output() changeGroupEvent = new EventEmitter<IGroupChange>();
+	@Output() changeItemEvent = new EventEmitter<IItemChange>();
+	@Output() deleteGroupEvent = new EventEmitter<IGroupDelete>();
+	@Output() deleteItemEvent = new EventEmitter<IItemDelete>();
 
-	title?: string = '';
+	title: string = '';
 
 	newItemTitle!: string;
+	newItemDescription: string = '';
 	newItemObj?: ITodoItem;
-	
+
 	itemStatus: any[] | undefined;
-	
+
 	selectedItemStatus?: any = {
 		name: TodoStatus.NOT_STARTED,
 		status: '../../../assets/icons/not-started.svg',
-		check: '../../../assets/icons/yellow-check.svg'
+		check: '../../../assets/icons/yellow-check.svg',
 	};
-	
+
 	constructor(
 		private confirmationService: ConfirmationService,
 		private messageService: MessageService
-		) {
-			console.log('selectedItemStatus: ', this.selectedItemStatus);
-	}
+	) {}
 
-	onInputChange(event: any): void {
-		this.title = event.target.value;
-	}
-	deleteSpace(): void {
-		this.title = this.title?.trim()
-		console.log('title: ', this.title);
+	onInputChangeTitle(event: any): void {}
+	deleteSpace(value: string): void {
+		value = value!.trim();
 	}
 	newTitle(event: any): void {
 		this.newItemTitle = event.target.value;
+	}
+	newDescription(event: any): void {
+		this.newItemDescription = event.target.value;
 	}
 
 	addNewItem(): void {
 		if (!this.newItemTitle || this.newItemTitle.trim() === '') {
 			return;
 		}
+		if (
+			this.newItemDescription === undefined ||
+			this.newItemTitle.trim() === ''
+		) {
+			return;
+		}
 		this.newItemObj = {
 			title: this.newItemTitle.trim(),
-			description: 'new item',
+			description: this.newItemDescription.trim(),
 			status: this.selectedItemStatus.name,
 		};
-		console.log('newItemObj: ', this.newItemObj);
-		this.newItemEvent.emit({
+		this.addItemEvent.emit({
 			value: this.newItemObj,
-			index: this.index,
+			indexGroup: this.index,
 		});
 
 		this.newItemTitle = '';
+		this.newItemDescription = '';
 		this.selectedItemStatus = {
 			name: TodoStatus.NOT_STARTED,
 			status: '../../../assets/icons/not-started.svg',
-			check: '../../../assets/icons/yellow-check.svg'
+			check: '../../../assets/icons/yellow-check.svg',
 		};
+	}
+
+	changeGroup(event: Event): void {
+		const inputElement = event.target as HTMLInputElement; // Явно указываем тип как HTMLInputElement
+		this.title = inputElement.value;
+		this.changeGroupEvent.emit({
+			title: this.title,
+			indexGroup: this.index,
+		});
+	}
+
+	changeItem(item: { itemValue: ITodoItem; indexItem: number }): void {
+		this.changeItemEvent.emit({
+			title: item.itemValue.title,
+			description: item.itemValue.description,
+			status: item.itemValue.status,
+			indexItem: item.indexItem,
+			indexGroup: this.index
+		});
 	}
 
 	deleteGroup(event: Event) {
 		this.deleteGroupEvent.emit({
-			index: this.index,
+			indexGroup: this.index,
 			event: event,
 		});
-	}
-	deleteItem(event: any) {
-		console.log('del1');
+	} 
+
+	deleteItem(item: any) {
 		this.deleteItemEvent.emit({
-			indexG: this.index,
-			indexI: event.index,
-			event: event.event,
+			indexGroup: this.index,
+			indexItem: item.indexItem,
+			event: item.event,
 		});
 	}
 
@@ -133,12 +158,12 @@ export class TodoGroupComponent {
 			{
 				name: TodoStatus.NOT_STARTED,
 				status: '../../../assets/icons/not-started.svg',
-				check: '../../../assets/icons/yellow-check.svg'
+				check: '../../../assets/icons/yellow-check.svg',
 			},
 			{
 				name: TodoStatus.IN_PROGRESS,
 				status: '../../../assets/icons/in-progress.svg',
-				check: '../../../assets/icons/in-progress.svg'
+				check: '../../../assets/icons/in-progress.svg',
 			},
 			{
 				name: TodoStatus.COMPLETED,

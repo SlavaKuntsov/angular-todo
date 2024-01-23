@@ -82,3 +82,31 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 	display:  flex;
 	justify-content: center;
 }
+
+
+.p-dropdown {
+	background: transparent;
+}
+
+.titleOptions {
+	
+	.p-dropdown > span, .p-dropdown{
+		max-height: 36px;
+		min-height: 36px;
+	}
+	.p-element > span, .p-element{
+		max-height: 36px;
+		min-height: 36px;
+	}
+	.p-dropdown-label{
+		padding: 6px 17px;
+		min-width: 31px;
+	}
+	.p-dropdown{
+		border: 0;
+	}
+}
+.titleOptions .p-dropdown-trigger{
+	visibility: hidden;
+	width: 0px;
+}
