@@ -1,19 +1,16 @@
-import { ITodoItem, TodoStatus } from "./todo.interface";
+import { ITodoGroup, ITodoItem, TodoOrder, TodoStatus } from "./todo.interface";
 
 export interface IItemAdd {
 	value: ITodoItem;
 	indexGroup: number;
 }
 
-export interface IGroupChange {
-	title: string;
+export interface IGroupChange extends ITodoGroup {
 	indexGroup: number;
 }
 
-export interface IItemChange {
-	title: string;
-	description: string;
-	status: TodoStatus;
+export interface IItemChange extends ITodoItem {
+	order: TodoOrder;
 	indexItem: number;
 	indexGroup: number;
 }

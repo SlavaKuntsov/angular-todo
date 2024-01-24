@@ -1,5 +1,5 @@
 import { Directive, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { ITodoItem, TodoStatus } from '../../../interfaces/todo.interface';
+import { ITodoItem, TodoOrder, TodoStatus } from '../../../interfaces/todo.interface';
 
 @Directive({})
 export class TodoItemBaseComponent implements OnInit {
@@ -21,6 +21,7 @@ export class TodoItemBaseComponent implements OnInit {
 	newItemDescription!: string;
 	oldDescription!: string;
 	newItemStatus!: TodoStatus;
+	newOrder!: TodoOrder;
 	inputFocusBool: boolean = false;
 
 	itemStatus: any[] | undefined;
@@ -33,15 +34,18 @@ export class TodoItemBaseComponent implements OnInit {
 				this.selectedItemStatus =
 					'../../../assets/icons/not-started.svg';
 				this.newItemStatus = TodoStatus.NOT_STARTED;
+				this.newOrder = TodoOrder.NOT_STARTED
 				break;
 			case TodoStatus.IN_PROGRESS:
 				this.selectedItemStatus =
 					'../../../assets/icons/in-progress.svg';
 				this.newItemStatus = TodoStatus.IN_PROGRESS;
+				this.newOrder = TodoOrder.IN_PROGRESS
 				break;
 			case TodoStatus.COMPLETED:
 				this.selectedItemStatus = '../../../assets/icons/completed.svg';
 				this.newItemStatus = TodoStatus.COMPLETED;
+				this.newOrder = TodoOrder.COMPLETED
 				break;
 		}
 		this.itemStatus = [
@@ -75,14 +79,17 @@ export class TodoItemBaseComponent implements OnInit {
 			case '../../../assets/icons/not-started.svg':
 				this.styleClass = 'yellow'
 				this.newItemStatus = TodoStatus.NOT_STARTED;
+				this.newOrder = TodoOrder.NOT_STARTED
 				break;
 			case '../../../assets/icons/in-progress.svg':
 				this.styleClass = 'blue'
 				this.newItemStatus = TodoStatus.IN_PROGRESS;
+				this.newOrder = TodoOrder.IN_PROGRESS
 				break;
 			case '../../../assets/icons/completed.svg':
 				this.styleClass = 'green'
 				this.newItemStatus = TodoStatus.COMPLETED;
+				this.newOrder = TodoOrder.COMPLETED
 				break;
 		}
 		this.changeItem();
@@ -93,6 +100,7 @@ export class TodoItemBaseComponent implements OnInit {
 			title: this.newItemTitle,
 			description: this.newItemDescription,
 			status: this.newItemStatus,
+			order: this.newOrder
 		};
 		this.changeItemEvent.emit({
 			itemValue: changeItem,

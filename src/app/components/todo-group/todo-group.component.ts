@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 import {
 	ITodoGroup,
 	ITodoItem,
+	TodoOrder,
 	TodoStatus,
 } from '../../interfaces/todo.interface';
 import { ItemCompletedComponent } from '../todo-item/item-completed/item-completed.component';
@@ -64,6 +65,7 @@ export class TodoGroupComponent {
 
 	newItemTitle!: string;
 	newItemDescription: string = '';
+	newOrder!: TodoOrder;
 	newItemObj?: ITodoItem;
 
 	itemStatus: any[] | undefined;
@@ -100,10 +102,24 @@ export class TodoGroupComponent {
 		) {
 			return;
 		}
+
+		switch (this.selectedItemStatus.name) {
+			case TodoStatus.NOT_STARTED:
+				this.newOrder = TodoOrder.NOT_STARTED;
+				break;
+			case TodoStatus.IN_PROGRESS:
+				this.newOrder = TodoOrder.IN_PROGRESS;
+				break;
+			case TodoStatus.COMPLETED:
+				this.newOrder = TodoOrder.COMPLETED;
+				break;
+		}
+
 		this.newItemObj = {
 			title: this.newItemTitle.trim(),
 			description: this.newItemDescription.trim(),
 			status: this.selectedItemStatus.name,
+			order: this.newOrder
 		};
 		this.addItemEvent.emit({
 			value: this.newItemObj,
@@ -133,6 +149,7 @@ export class TodoGroupComponent {
 			title: item.itemValue.title,
 			description: item.itemValue.description,
 			status: item.itemValue.status,
+			order: item.itemValue.order,
 			indexItem: item.indexItem,
 			indexGroup: this.index
 		});

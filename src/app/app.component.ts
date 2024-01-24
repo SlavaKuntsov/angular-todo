@@ -1,28 +1,49 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { TodoCollectionComponent } from './components/todo-collection/todo-collection.component';
 import { TodoGroupComponent } from './components/todo-group/todo-group.component';
 
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { PrimeNGConfig } from 'primeng/api';
+import { MessageService, PrimeNGConfig } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+import { Subscription } from 'rxjs';
+import { ToastService } from './services/toast.service';
 
 @Component({
 	selector: 'app-root',
 	standalone: true,
 	templateUrl: './app.component.html',
-	imports: [
-		CommonModule,
-		RouterOutlet,
-		TodoGroupComponent,
-		TodoCollectionComponent,
+	imports: [CommonModule, RouterOutlet, TodoGroupComponent, ToastModule],
+	providers: [
+		BrowserAnimationsModule,
+		BrowserModule,
+		MessageService,
+		ToastService,
 	],
-	providers: [BrowserAnimationsModule, BrowserModule],
+	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class AppComponent implements OnInit {
-	constructor(private primengConfig: PrimeNGConfig) {}
+	private toastSubscription!: Subscription;
 
+	constructor(
+		private messageService: MessageService,
+		private toastService: ToastService,
+		private primengConfig: PrimeNGConfig
+	) {
+		this.toastSubscription = this.toastService
+			.getToastObservable()
+			.subscribe((toast) => {
+				this.messageService.add({
+					severity: toast.severity,
+					summary: toast.summary,
+					detail: toast.detail,
+				});
+			});
+	}
+	ngOnDestroy() {
+		this.toastSubscription.unsubscribe();
+	}
 	ngOnInit() {
 		this.primengConfig.ripple = true;
 		this.primengConfig.zIndex = {

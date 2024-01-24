@@ -1,1 +1,8 @@
-<p>auth works!</p>
+<div class="auth w-full h-full pt-40 ">
+	@if(currentPath.includes('login')){
+		<app-login></app-login>
+	}
+	@else{
+		<app-signup></app-signup>
+	}
+</div>
