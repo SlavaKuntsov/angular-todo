@@ -40,7 +40,7 @@
 				></app-item-not-started>
 				<app-item-not-started
 					(changeItemEvent)="changeItem($event)"
-					(deleteItemHandler)="deleteItem($event)"
+					(deleteItemEvent)="deleteItem($event)"
 					[todoItem]="item"
 					[index]="i"
 					[styleClass]="'blue'"
@@ -48,7 +48,7 @@
 				></app-item-not-started>
 				<app-item-not-started
 					(changeItemEvent)="changeItem($event)"
-					(deleteItemHandler)="deleteItem($event)"
+					(deleteItemEvent)="deleteItem($event)"
 					[todoItem]="item"
 					[index]="i"
 					[styleClass]="'green'"

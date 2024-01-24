@@ -114,5 +114,9 @@ export class TodoItemBaseComponent implements OnInit {
 			indexItem: this.index,
 			event: event,
 		});
+		console.log({
+			indexItem: this.index,
+			event: event,
+		})
 	}
 }

@@ -119,7 +119,7 @@ export class TodoGroupComponent {
 			title: this.newItemTitle.trim(),
 			description: this.newItemDescription.trim(),
 			status: this.selectedItemStatus.name,
-			order: this.newOrder
+			order: this.newOrder,
 		};
 		this.addItemEvent.emit({
 			value: this.newItemObj,
@@ -151,7 +151,7 @@ export class TodoGroupComponent {
 			status: item.itemValue.status,
 			order: item.itemValue.order,
 			indexItem: item.indexItem,
-			indexGroup: this.index
+			indexGroup: this.index,
 		});
 	}
 
@@ -160,7 +160,7 @@ export class TodoGroupComponent {
 			indexGroup: this.index,
 			event: event,
 		});
-	} 
+	}
 
 	deleteItem(item: any) {
 		this.deleteItemEvent.emit({

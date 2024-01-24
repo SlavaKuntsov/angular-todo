@@ -110,6 +110,7 @@ export class MainComponent implements OnInit, DoCheck {
 	}
 
 	deleteItem(item: IItemDelete): void {
+		console.log('item: ', item);
 		this.confirmationService.confirm({
 			target: item.event.target as EventTarget,
 			message: 'Do you want to delete this record?',
