@@ -12,6 +12,7 @@ import { ToastModule } from 'primeng/toast';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { ToastService } from '../../services/toast.service';
+import { Token } from '@angular/compiler';
 
 @Component({
 	selector: 'app-login',
@@ -56,8 +57,14 @@ export class LoginComponent  {
 
 	onSubmit() {
 		if (this.userData.valid) {
-			console.log(this.userData.value);
-			this.authService.login(this.userData.value);
+
+			const user = {
+				email: this.userData.value.email,
+				password: this.userData.value.password,
+				token: localStorage.getItem('token')!
+			}
+
+			this.authService.login(user);
 		} else {
 			console.log('error');
 		}

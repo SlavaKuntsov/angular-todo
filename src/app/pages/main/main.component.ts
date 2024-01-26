@@ -3,12 +3,11 @@ import {
 	CUSTOM_ELEMENTS_SCHEMA,
 	Component,
 	DoCheck,
-	OnDestroy,
 	OnInit,
 } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { TodoGroupComponent } from '../../components/todo-group/todo-group.component';
-import { ITodoGroup, TodoStatus } from '../../interfaces/todo.interface';
+import { ITodoGroup } from '../../interfaces/todo.interface';
 
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -158,21 +157,18 @@ export class MainComponent implements OnInit, DoCheck {
 			});
 	}
 	ngOnInit(): void {
-		this.sortAll()
+		this.sortAll();
 	}
-	ngDoCheck(): void {
-		console.log(this.todoGroups);
-	}
+	ngDoCheck(): void {}
 	// ngOnDestroy() {
 	// 	this.toastSubscription.unsubscribe();
 	// }
 	sort(indexGroup: number): void {
-		this.todoGroups[indexGroup].items!.sort((a, b) => a.order - b.order)
+		this.todoGroups[indexGroup].items!.sort((a, b) => a.order - b.order);
 	}
 	sortAll(): void {
 		this.todoGroups.forEach((group: ITodoGroup) => {
-			group.items!.sort((a, b) => a.order - b.order)
-			
+			group.items!.sort((a, b) => a.order - b.order);
 		});
 	}
 	// sort(): void {
@@ -188,7 +184,7 @@ export class MainComponent implements OnInit, DoCheck {
 	// 		}
 
 	// 		return 0;
-	// 	});	
+	// 	});
 	// }
 	// compareTypes(a: TodoStatus, b: TodoStatus) {
 	// 	console.log('sort');

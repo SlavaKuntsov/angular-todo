@@ -3,14 +3,20 @@ import { Inject, Injectable, effect, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { catchError, map, tap } from 'rxjs';
-import { IAuthUser, IUser } from '../interfaces/user.interface';
+import {
+	IAuthUserCreate,
+	IAuthUserLogin,
+	IUser,
+} from '../interfaces/user.interface';
 import { ToastService } from './toast.service';
+import { environment } from '../../environments/environment'
 
 @Injectable({
 	providedIn: 'root',
 })
 export class AuthService {
 	isAuthSig = signal<boolean>(false);
+	#URL_PATH!: string;
 
 	constructor(
 		@Inject(HttpClient) private readonly http: HttpClient,
@@ -18,6 +24,7 @@ export class AuthService {
 		private toastService: ToastService,
 		private router: Router
 	) {
+		this.#URL_PATH = "https://angular-todo-backend.onrender.com";
 		effect(() => {
 			if (this.isAuthSig()) {
 				router.navigate(['/']);
@@ -25,30 +32,36 @@ export class AuthService {
 		});
 	}
 
-	signUp(userData: IAuthUser) {
+	signUp(userData: IAuthUserCreate) {
+		console.log('signup');
 		return this.http
-			.post('https://localhost:7034/Users/SignUp', userData)
+			.post<IUser>(`${this.#URL_PATH}/Users/Create`, userData, { })
 			.pipe(
+				map((res: Object) => res as string),
+				tap((token: string) => {
+					console.log('token: ', token);
+					this.toastService.showToast(
+						'success',
+						'Success',
+						'Create user successful'
+					);
+					localStorage.setItem('token', token);
+				}),
 				catchError((err) => {
-					console.log('error');
 					this.handleError(err);
 					throw new Error(err.message);
 				})
 			)
 			.subscribe(() => {
 				console.log(userData);
-				this.messageService.add({
-					severity: 'success',
-					summary: 'Success',
-					detail: 'Create user',
-				});
+				this.isAuthSig.set(true);
 			});
 	}
 
-	login(userData: IAuthUser) {
-		console.log('login');
+	login(userData: IAuthUserLogin) {
+		console.log('userData login: ', userData);
 		return this.http
-			.post<IUser>('https://localhost:7034/Users/Login', userData)
+			.post<IUser>('https://angular-todo-backend.onrender.com/Users/Login', userData)
 			.pipe(
 				map((res: Object) => res as IUser),
 				tap((res: IUser) => {
@@ -58,8 +71,8 @@ export class AuthService {
 						'Success',
 						'Login successful'
 					);
-					
-					localStorage.setItem('token', res.token);
+
+					// localStorage.setItem('token', );
 				}),
 				catchError((err) => {
 					this.handleError(err);

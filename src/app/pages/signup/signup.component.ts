@@ -9,6 +9,8 @@ import {
 } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { AuthService } from '../../services/auth.service';
+import { Subscription } from 'rxjs';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
 	selector: 'app-signup',
@@ -18,10 +20,15 @@ import { AuthService } from '../../services/auth.service';
 	templateUrl: './signup.component.html',
 	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class SignupComponent {
+export class SignupComponent  {
 	userData: FormGroup;
+	private toastSubscription!: Subscription;
 
-	constructor(private readonly authService: AuthService) {
+	constructor(
+		private readonly authService: AuthService,
+		private toastService: ToastService,
+		private messageService: MessageService
+	) {
 		this.userData = new FormGroup({
 			email: new FormControl('', [Validators.required, Validators.email]),
 			password: new FormControl('', [
@@ -29,6 +36,15 @@ export class SignupComponent {
 				Validators.minLength(6),
 			]),
 		});
+		this.toastSubscription = this.toastService
+			.getToastObservable()
+			.subscribe((toast) => {
+				this.messageService.add({
+					severity: toast.severity,
+					summary: toast.summary,
+					detail: toast.detail,
+				});
+			});
 	}
 
 	onSubmit() {
@@ -38,5 +54,9 @@ export class SignupComponent {
 		} else {
 			console.log('error');
 		}
+	}
+
+	ngOnDestroy() {
+		this.toastSubscription.unsubscribe();
 	}
 }

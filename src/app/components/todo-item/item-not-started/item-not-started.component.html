@@ -49,7 +49,7 @@
 		></textarea>
 		@if (inputFocusBool){
 		<button
-			(click)="newTitle($event); newItemTitle?.trim()"
+			(click)="newTitle($event); newItemTitle!.trim()"
 			class="border-0 min-w-[28px] h-[28px] hover:scale-110 transition-all hover:shadow-blue-200 rounded-xl hover:shadow-md"
 		>
 			<img

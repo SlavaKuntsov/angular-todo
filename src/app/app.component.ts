@@ -9,6 +9,7 @@ import { MessageService, PrimeNGConfig } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { Subscription } from 'rxjs';
 import { ToastService } from './services/toast.service';
+import { AuthService } from './services/auth.service';
 
 @Component({
 	selector: 'app-root',
@@ -20,6 +21,7 @@ import { ToastService } from './services/toast.service';
 		BrowserModule,
 		MessageService,
 		ToastService,
+		// AuthService
 	],
 	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
@@ -29,7 +31,8 @@ export class AppComponent implements OnInit {
 	constructor(
 		private messageService: MessageService,
 		private toastService: ToastService,
-		private primengConfig: PrimeNGConfig
+		private primengConfig: PrimeNGConfig,
+		// private authService: AuthService
 	) {
 		this.toastSubscription = this.toastService
 			.getToastObservable()
@@ -45,6 +48,9 @@ export class AppComponent implements OnInit {
 		this.toastSubscription.unsubscribe();
 	}
 	ngOnInit() {
+		// if(localStorage.getItem('token'))
+		// this.authService.login(localStorage.getItem('token'))
+
 		this.primengConfig.ripple = true;
 		this.primengConfig.zIndex = {
 			modal: 1100, // dialog, sidebar
